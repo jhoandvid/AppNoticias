@@ -4,6 +4,8 @@ import { Observable, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { NewsResponse, Article, ArticlesByCategoryAndPage } from '../interface/index';
 import {map } from "rxjs/operators"
+import { storedArticlesByCategory } from '../data/mock-news';
+
 
 
 const apiKey=environment.apiKey;
@@ -15,10 +17,7 @@ const apiUrl = environment.apiUrl;
 export class NewsService {
 
 
-  private articlesByCategoryAndPage:ArticlesByCategoryAndPage={
-   
-  }
-
+  private articlesByCategoryAndPage:ArticlesByCategoryAndPage=storedArticlesByCategory;
     
   constructor(private http:HttpClient) { }
 
@@ -44,6 +43,8 @@ export class NewsService {
 
   getTopHeadlinesByCategory(category:string, loadMore:boolean=false):Observable<Article[]>{
 
+    return of(this.articlesByCategoryAndPage[category].articles);
+/* 
     if(loadMore){
         return this.getArticlesByCategory(category);
     }
@@ -52,7 +53,7 @@ export class NewsService {
       return of(this.articlesByCategoryAndPage[category].articles);
     }
 
-    return this.getArticlesByCategory(category);
+    return this.getArticlesByCategory(category); */
   }
 
   private getArticlesByCategory(category:string):Observable<Article[]>{
