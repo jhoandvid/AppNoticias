@@ -6,8 +6,6 @@ import { ActionSheetButton, ActionSheetController, Platform } from '@ionic/angul
 
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { StorageService } from 'src/app/services/storage.service';
-import { ChildActivationStart } from '@angular/router';
-
 
 @Component({
   selector: 'app-article',
@@ -47,6 +45,14 @@ export class ArticleComponent {
 
 
   const normalBtns:ActionSheetButton[]=[
+    
+    {
+      text:'Compartir',
+      icon:'share-outline',
+      handler:()=>{
+        this.onShareArticle()
+      }
+    },
     {
       text: articleInFavorite?'Remover Favorito':'Favorito',
       icon: articleInFavorite?'heart':'heart-outline',
@@ -62,16 +68,23 @@ export class ArticleComponent {
   ]
 
 
-  const shareBtn:ActionSheetButton={
+ /*  const shareBtn:ActionSheetButton={
     text:'Compartir',
     icon:'share-outline',
-    handler:()=>this.onShareArticle()
-  }
+    handler:()=>{
+      this.onShareArticle()
+    }
+  } */
 
 
-  if(this.plaform.is('capacitor')){
+
+
+/*   if(this.plaform.is('cordova')){
       normalBtns.unshift(shareBtn);
   }
+ */
+
+
 
   const actionSheet=await this.actionSheetCtrl.create({
     header:'Optiones',
@@ -89,17 +102,35 @@ export class ArticleComponent {
   }
 
   onShareArticle(){
-    const {title,source,url }=this.article;
-    this.socialSharing.share(
+    if (navigator.share) {
+      navigator.share({
+        title:this.article.title,
+        text:this.article.description,
+        url:this.article.urlToImage
+      })
+        .then(() => console.log('Successful share'))
+        .catch((error) => console.log('Error sharing', error));
+    }
+
+    //const {title,source,url }=this.article;
+
+    /* this.socialSharing.canShareVia(
      title,
      source.name,
       null,
       url
-    );
+    ); */
   }
+
+ 
+
 
   onToggleFavorite(){
    this.storeService.saveRemoveArticle(this.article);
+  }
+
+  compartirNoticia(){
+
   }
 
 }
